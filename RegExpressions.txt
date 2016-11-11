@@ -1,0 +1,112 @@
+Removing all whitespace characters except for “ ”
+
+1. [^\S ]+
+The regular expression [\S ] matches the characters you want to keep, i.e. either a space or anything that isn't a whitespace. 
+The negated character class [^\S ] therefore must match all the characters you want to remove.
+
+You can always simulate set subtraction using intersection with the complement, so
+
+2. [\s&&[^ ]]
+
+
+
+Backreferences
+The section of the input string matching the capturing group(s) is saved in memory for later recall via backreference. 
+A backreference is specified in the regular expression as a backslash (\) followed by a digit indicating the number of the group to be recalled. 
+For example, the expression (\d\d) defines one capturing group matching two digits in a row, which can be recalled later in the expression via the backreference \1.
+
+To match any 2 digits, followed by the exact same two digits, you would use (\d\d)\1 as the regular expression.
+
+
+
+String text = "Malai 281092";
+String pStr = "[a-zA-Z]+ (?<date>\\d+)"; 
+Matcher m = Pattern.compile(pStr).matcher(text); 
+if (m.matches()) {
+	System.out.println(m.group("date")); 
+}
+	
+
+
+Pattern.DOTALL Enables dotall mode. In dotall mode, the expression . matches any character, including a line terminator. By default this expression does not match line terminators. 
+Dotall mode can also be enabled via the embedded flag expression (?s).
+
+
+Embedded Flag Expressions
+
+It's also possible to enable various flags using embedded flag expressions. Embedded flag expressions are an alternative to the two-argument version of compile, and are specified in the regular expression itself. 
+The embedded flag expressions that correspond to Pattern's publicly accessible fields are presented in the following table:
+
+Constant	Equivalent Embedded Flag Expression
+Pattern.CANON_EQ	None
+Pattern.CASE_INSENSITIVE	(?i)
+Pattern.COMMENTS	(?x)
+Pattern.MULTILINE	(?m)
+Pattern.DOTALL	(?s)
+Pattern.LITERAL	None
+Pattern.UNICODE_CASE	(?u)
+Pattern.UNIX_LINES	(?d)
+ 
+
+Character classes
+
+[abc] a, b, or c (simple class) 
+[^abc] Any character except a, b, or c (negation) 
+[a-zA-Z] a through z or A through Z, inclusive (range) 
+[a-d[m-p]] a through d, or m through p: [a-dm-p] (union) 
+[a-z&&[def]] d, e, or f (intersection) 
+[a-z&&[^bc]] a through z, except for b and c: [ad-z] (subtraction) 
+[a-z&&[^m-p]] a through z, and not m through p: [a-lq-z](subtraction) 
+
+ 
+Predefined character classes
+
+. Any character (may or may not match line terminators) 
+\d A digit: [0-9] 
+\D A non-digit: [^0-9] 
+\h A horizontal whitespace character: [ \t\xA0\u1680\u180e\u2000-\u200a\u202f\u205f\u3000] 
+\H A non-horizontal whitespace character: [^\h] 
+\s A whitespace character: [ \t\n\x0B\f\r] 
+\S A non-whitespace character: [^\s] 
+\v A vertical whitespace character: [\n\x0B\f\r\x85\u2028\u2029]  
+\V A non-vertical whitespace character: [^\v] 
+\w A word character: [a-zA-Z_0-9] 
+\W A non-word character: [^\w] 
+
+
+Boundary matchers
+
+^ The beginning of a line 
+$ The end of a line 
+\b A word boundary 
+\B A non-word boundary 
+\A The beginning of the input 
+\G The end of the previous match 
+\Z The end of the input but for the final terminator, if any 
+\z The end of the input 
+
+
+Logical operators
+
+XY X followed by Y 
+X|Y Either X or Y 
+(X) X, as a capturing group 
+
+ 
+Back references
+
+\n Whatever the nth capturing group matched 
+\k<name> Whatever the named-capturing group "name" matched 
+
+
+Special constructs (named-capturing and non-capturing)
+
+(?<name>X) X, as a named-capturing group 
+(?:X) X, as a non-capturing group 
+(?idmsuxU-idmsuxU)  Nothing, but turns match flags i d m s u x U on - off 
+(?idmsux-idmsux:X)   X, as a non-capturing group with the given flags i d m s u x on - off 
+(?=X) X, via zero-width positive lookahead 
+(?!X) X, via zero-width negative lookahead 
+(?<=X) X, via zero-width positive lookbehind 
+(?<!X) X, via zero-width negative lookbehind 
+(?>X) X, as an independent, non-capturing group 
